@@ -1,0 +1,36 @@
+version: "3.2"
+
+services:
+  glpi:
+    image: glpi
+    ports:
+#      - "80:80"
+      - "443:443"
+    depends_on:
+      - mariadb
+    volumes:
+      - glpi-data:/data
+    env_file:
+      - ./env/glpi.env
+    restart: always
+
+  mariadb:
+    image: mariadb:10.7
+    container_name: mariadb
+    hostname: mariadb
+    volumes:
+      - mariadb:/var/lib/mysql
+      - ./mariadb/glpi.sql:/docker-entrypoint-initdb.d/glpi.sql:ro
+    env_file:
+      - ./env/mariadb.env
+    restart: always
+
+#  adminer:
+#    image: adminer
+#    restart: always
+#    ports:
+#      - 8080:8080
+
+volumes:
+  glpi-data:
+  mariadb:
