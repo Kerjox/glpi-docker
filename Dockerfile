@@ -31,22 +31,30 @@ RUN  --mount=type=bind,from=mlocati/php-extension-installer:1.5,source=/usr/bin/
 
 # Install GLPI
 
-COPY ./data /data
 RUN \
   apt update \
   && apt install wget \
   && wget https://github.com/glpi-project/glpi/releases/download/$GLPI_VERSION/glpi-$GLPI_VERSION.tgz \
   && tar xvf glpi-$GLPI_VERSION.tgz -C /var/www/html/ \
-  && rm glpi-$GLPI_VERSION.tgz \
-  && chown -R www-data:www-data /var/www/html/ \
-  && mkdir -p /data/log \
-  && mkdir -p /data/glpi \
-  && cp -r /var/www/html/glpi/config /data \
-  && cp -r /var/www/html/glpi/files/* /data/glpi \
-  && rm -r /var/www/html/glpi/files \
+  && rm glpi-$GLPI_VERSION.tgz
+
+# Config GLPI
+
+RUN \
+  mkdir -p /data/log \
+  && mkdir -p /data/plugins \
+  && mkdir -p /data/marketplace \
+  && rm -r /var/www/html/glpi/plugins \
+  && ln -s /data/plugins /var/www/html/glpi/plugins \
+  && rm -r /var/www/html/glpi/marketplace \
+  && ln -s /data/marketplace /var/www/html/glpi/marketplace \
+  && mv /var/www/html/glpi/config /data \
+  && mv /var/www/html/glpi/files /data \
+  && echo "<?php\n\t  define('GLPI_VAR_DIR', '/data/files');\n\t  define('GLPI_LOG_DIR', '/data/log');" > /data/config/local_define.php \
   && echo "<?php\n\tdefine('GLPI_CONFIG_DIR', '/data/config/');\n\tif (file_exists(GLPI_CONFIG_DIR . '/local_define.php')) {\n\t   require_once GLPI_CONFIG_DIR . '/local_define.php';\n\t}" > /var/www/html/glpi/inc/downstream.php \
-  && chown -R www-data:www-data /data \
-  && echo "php_value session.cookie_httponly 1\n\tphp_value session.cookie_secure 1" >> /var/www/html/glpi/.htaccess
+  && echo "php_value session.cookie_httponly 1\n\tphp_value session.cookie_secure 1" >> /var/www/html/glpi/.htaccess \
+  && chown -R www-data. /var/www/html/glpi \
+  && chown -R www-data. /data
 
 # Config apache2
 

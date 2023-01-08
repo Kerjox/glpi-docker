@@ -30,8 +30,6 @@ jobs:
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
-        with:
-          platforms: linux/amd64,linux/arm64
 
       - name: Build and push
         uses: docker/build-push-action@v3
@@ -41,7 +39,7 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          platforms: linux/amd64,linux/arm64
+          platforms: linux/amd64, linux/arm64, linux/i386
           tags: |
             ${{ secrets.DOCKERHUB_USERNAME }}/glpi:${{ steps.tagName.outputs.tag }},
             ${{ secrets.DOCKERHUB_USERNAME }}/glpi:latest
