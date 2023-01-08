@@ -21,6 +21,8 @@ if [ ! -f /data/config/config_db.php ]; then
   echo "[INFO] Starting GLPI installation ..."
 else
   echo "[INFO] Database configuration file found."
+  echo "[INFO] Removing install.php ..."
+  rm -rf /var/www/html/glpi/install/install.php
   echo "[INFO] Starting GLPI ..."
 fi
 
