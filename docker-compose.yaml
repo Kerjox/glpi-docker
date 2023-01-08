@@ -3,6 +3,7 @@ version: "3.2"
 services:
   glpi:
     image: glpi
+    container_name: glpi
     ports:
 #      - "80:80"
       - "443:443"
@@ -10,8 +11,8 @@ services:
       - mariadb
     volumes:
       - glpi-data:/data
-    env_file:
-      - ./env/glpi.env
+#      - ./ssl/ssl-cert-glpi.crt:/etc/apache2/ssl/ssl-cert-glpi.crt
+#      - ./ssl/ssl-cert-glpi.key:/etc/apache2/ssl/ssl-cert-glpi.key
     restart: always
 
   mariadb:
@@ -20,9 +21,11 @@ services:
     hostname: mariadb
     volumes:
       - mariadb:/var/lib/mysql
-      - ./mariadb/glpi.sql:/docker-entrypoint-initdb.d/glpi.sql:ro
-    env_file:
-      - ./env/mariadb.env
+    environment:
+      MARIADB_ROOT_PASSWORD: sadadfrgsfgbsrfg
+      MARIADB_DATABASE: glpi
+      MARIADB_USER: glpi_user
+      MARIADB_PASSWORD: glpi
     restart: always
 
 #  adminer:

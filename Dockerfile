@@ -44,7 +44,6 @@ RUN \
   && cp -r /var/www/html/glpi/config /data \
   && cp -r /var/www/html/glpi/files/* /data/glpi \
   && rm -r /var/www/html/glpi/files \
-  && mv /data/config/config_db.php /data/config/config_db.php.bak \
   && echo "<?php\n\tdefine('GLPI_CONFIG_DIR', '/data/config/');\n\tif (file_exists(GLPI_CONFIG_DIR . '/local_define.php')) {\n\t   require_once GLPI_CONFIG_DIR . '/local_define.php';\n\t}" > /var/www/html/glpi/inc/downstream.php \
   && chown -R www-data:www-data /data \
   && echo "php_value session.cookie_httponly 1\n\tphp_value session.cookie_secure 1" >> /var/www/html/glpi/.htaccess
@@ -53,11 +52,12 @@ RUN \
 
 COPY ./etc /etc
 RUN \
-  chmod 600 /etc/ssl/certs/ssl-cert-glpi.crt \
-  && chmod 644 /etc/ssl/private/ssl-cert-glpi.key \
+  mkdir -p /data/log/apache \
+  && chmod 600 /etc/apache2/ssl/ssl-cert-glpi.crt \
+  && chmod 644 /etc/apache2/ssl/ssl-cert-glpi.key \
   && a2dissite 000-default.conf \
   && a2ensite glpi.conf \
-  && a2enmod ssl
+  && a2enmod ssl proxy_http
 
 COPY ./opt /opt
 RUN chmod +x /opt/glpi_start.sh

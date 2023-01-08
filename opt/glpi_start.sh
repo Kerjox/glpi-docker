@@ -12,13 +12,16 @@ echo """
 
 """
 
-cp /data/config/config_db.php.bak /data/config/config_db.php
-rm /var/www/html/glpi/install/install.php
-sed -i "s/<HOST>/$MARIADB_HOST:$MARIADB_PORT/g" /data/config/config_db.php
-sed -i "s/<USER>/$MARIADB_USER/g" /data/config/config_db.php
-sed -i "s/<PASS>/$MARIADB_PASSWORD/g" /data/config/config_db.php
-sed -i "s/<DATABASE>/$MARIADB_DATABASE/g" /data/config/config_db.php
-echo "[INFO] Database configuration ...... OK"
+# Check if database file exists
 
-echo "[INFO] GLPI configuration ...... OK"
+
+
+if [ ! -f /data/config/config_db.php ]; then
+  echo "[INFO] Database configuration file not found."
+  echo "[INFO] Starting GLPI installation ..."
+else
+  echo "[INFO] Database configuration file found."
+  echo "[INFO] Starting GLPI ..."
+fi
+
 apache2-foreground
