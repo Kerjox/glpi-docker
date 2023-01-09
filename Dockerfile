@@ -1,12 +1,8 @@
 FROM php:8.1.14-apache-bullseye
 ENV GLPI_VERSION 10.0.5
-ENV MARIADB_HOST mariadb
-ENV MARIADB_PORT 3306
-ENV MARIADB_USER glpi_user
-ENV MARIADB_PASSWORD glpi
-ENV MARIADB_DATABASE glpi
 
 # Install PHP externsions for GLPI
+
 RUN  --mount=type=bind,from=mlocati/php-extension-installer:1.5,source=/usr/bin/install-php-extensions,target=/usr/local/bin/install-php-extensions \
       install-php-extensions \
         curl \
